@@ -1,67 +1,144 @@
-# Template de démonstration
+# Segway Navimow
 
-Ceci est la documentation utilisateur de l'intégration. Gladys ré-héberge ce
-fichier et affiche un lien **Documentation** permanent vers lui dans l'écran
-de configuration (dans la langue de l'utilisateur, avec l'anglais en repli) —
-c'est au moment de configurer que l'utilisateur en a le plus besoin. Gardez
-les courtes indications d'accueil dans les blocs `section` du `config_schema`
-du manifest ; mettez ici le pas-à-pas détaillé (captures d'écran, dépannage…).
+**Connecteur non officiel, sans lien avec Segway ni Navimow.** Il amène vos
+tondeuses robots Segway Navimow (les modèles sans fil périphérique) dans
+Gladys par le cloud Navimow, celui de l'application Navimow, avec la même
+connexion que celle que Segway propose à Home Assistant. Navimow et Segway
+sont des marques de leurs propriétaires.
+
+> **Version de développement (0.1).** Construite à partir de la documentation
+> et des intégrations de Segway, et testée avec des réponses simulées : elle
+> n'a pas encore tourné avec une vraie tondeuse. Vos retours sont les
+> bienvenus dans les
+> [issues GitHub](https://github.com/LM1LC3N7/gladys-navimow/issues).
 
 ## Ce que vous obtenez
 
-Six appareils de démonstration apparaissent après l'installation : une
-station météo (vraies données Open-Meteo), un interrupteur, une lampe
-variable, une prise connectée avec mesure de puissance, un détecteur de
-mouvement et une caméra.
+| Surface                   | Contenu                                                                                                                                                                                                              |
+| ------------------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| Un appareil par tondeuse  | état de fonctionnement, batterie, activité, code et texte d'erreur, en ligne, avancement de la tonte (%) et surface tondue dans la session (m²), un choix **tondre / pause** et un bouton de **retour à la station** |
+| Mises à jour en direct    | l'état, la batterie et l'avancement arrivent en quelques secondes pendant le travail (MQTT sur WebSocket sécurisé) ; l'état est aussi relu toutes les 5 minutes                                                      |
+| Déclencheurs de scène     | **erreur**, **activité changée**, **tonte terminée** (complète, interrompue ou inconnue), **de retour à la station**                                                                                                 |
+| Actions de scène          | **démarrer la tonte**, **pause**, **reprendre**, **retour à la station**, pour une tondeuse ou toutes                                                                                                                |
+| Widget de tableau de bord | **Tondeuse robot** : batterie, avancement, activité, erreur, en ligne, mises à jour en direct, et boutons Démarrer / Pause / Reprendre / Station                                                                     |
+| Écran de configuration    | un bouton **Tester Navimow** qui liste vos tondeuses                                                                                                                                                                 |
 
-## Configuration
+## Installation
 
-1. Ouvrez l'onglet **Configuration** de l'intégration.
-2. Renseignez la **latitude** et la **longitude** que la station météo de
-   démonstration doit observer (Paris par défaut), et choisissez votre unité
-   de température. L'**intervalle de rafraîchissement** règle la fréquence
-   de lecture de la station météo et de la puissance de la prise : toutes
-   les 5 minutes par défaut, toutes les minutes au plus.
-3. Enregistrez : les appareils apparaissent dans l'onglet **Découverte**,
-   prêts à être ajoutés.
+1. Installez l'intégration depuis le store Gladys, puis ouvrez son écran de
+   **Configuration**.
+2. À côté de **Compte Navimow**, cliquez sur **Connecter**. La page de
+   connexion de Segway s'ouvre : connectez-vous avec l'e-mail et le mot de
+   passe de l'application Navimow (elle peut demander un captcha). Le
+   navigateur revient ensuite tout seul dans Gladys, et l'état de connexion
+   passe au vert.
+3. Ouvrez **Découverte** et ajoutez vos tondeuses.
+4. Placez le widget **Tondeuse robot** sur un tableau de bord.
 
-Le réglage **Préférer la connexion locale** pilote la prise de
-démonstration : elle affiche en badge le canal réellement utilisé (local ou
-cloud), avec un point orange quand elle fonctionne en mode dégradé (local
-refusé, bascule cloud).
+Votre mot de passe reste chez Segway : Gladys ne reçoit qu'un jeton de
+session, que l'intégration renouvelle toute seule (environ toutes les
+heures). Si Segway met fin à la session, l'état de connexion le dit : cliquez
+à nouveau sur **Connecter**.
 
-## Actions
+### Si Connecter ne revient pas dans Gladys
 
-- **Tester le fournisseur météo** — effectue une requête en direct vers
-  Open-Meteo et affiche la température et l'humidité actuelles sous le
-  bouton.
-- **Identifier un appareil** — choisissez un de vos appareils dans la liste
-  et il se signale (la lampe de démonstration « clignote » dans les logs).
+Connectez-vous à la main, comme le fait l'adaptateur ioBroker :
+
+1. Ouvrez le lien **Page de connexion Navimow** de l'écran de configuration
+   (dans le bloc « Connecter ne revient pas dans Gladys ? ») et connectez-vous.
+2. Le navigateur affiche ensuite une page d'erreur dont l'adresse commence
+   par `http://localhost:1/callback?code=` : c'est normal.
+3. Copiez **toute cette adresse** dans l'action **Se connecter avec l'adresse
+   copiée** en bas de l'écran de configuration, et lancez-la dans les minutes
+   qui suivent (un code ne sert qu'une fois, peu de temps).
+
+## L'appareil
+
+Gladys n'a pas encore de catégorie tondeuse robot : comme l'intégration
+Husqvarna Automower, l'état et les deux commandes utilisent la catégorie
+**aspirateur robot**, la seule qui décrit un robot qui travaille, rentre à sa
+base et se recharge. La carte de l'appareil affiche donc :
+
+- **État** : En cours (tonte ou cartographie), En pause, Retour à la base,
+  En charge, Sur la base, Erreur (soulevée ou une erreur), Arrêté (à l'arrêt,
+  mise à jour, autotest, hors ligne) ;
+- **Tonte (arrêt : pause)** : un choix dont **Tondre** (« Nettoyer ») démarre
+  la tonte (ou reprend une tonte en pause) et **Pause** (« Repos ») met la
+  tondeuse en pause ;
+- **Retour à la station** : le bouton « Retour à la base ».
+
+Les autres fonctionnalités sont la batterie (%), l'activité (texte dans la
+langue choisie dans la configuration), le code d'erreur (0 : aucune, -1 : une
+erreur sans code numérique) et son texte, en ligne, l'avancement de la tonte
+(%) et la surface tondue dans la session en cours (m²). L'avancement et la
+surface arrivent avec les messages de position de la tondeuse : Segway ne les
+envoie que quand la tondeuse tond tout le terrain (une tâche par zone n'en
+envoie pas).
+
+**Démarrer** lance la tâche réglée dans l'application Navimow ; l'API
+publique n'offre pas de « terminer la tâche » : **pause** arrête la tondeuse
+là où elle est, **retour à la station** la renvoie chez elle.
 
 ## Scènes
 
-L'intégration ajoute ses propres cartes à l'éditeur de scènes (Gladys 5.1
-ou plus récent), dans la catégorie **Intégrations** :
+- **Erreur Navimow** : une fois par erreur (soulevée, coincée, erreur de
+  moteur ou de capteur...). Variables : le code, le texte en anglais et en
+  français, l'activité, la batterie.
+- **Activité Navimow changée** : éventuellement pour une activité (tonte,
+  cartographie, en pause, retour à la station, à la station, en charge, à
+  l'arrêt, soulevée, erreur, mise à jour logicielle, autotest, hors ligne).
+  Variables : la nouvelle et l'ancienne activité, la batterie.
+- **Tonte Navimow terminée** : une session (elle commence quand la tondeuse
+  tond) s'est terminée à la station ou à l'arrêt. Son **issue** peut filtrer
+  le déclencheur : **complète** (l'avancement a atteint 100 %),
+  **interrompue** (moins de 100 % : un arrêt, ou une pause de recharge avant
+  de repartir) ou **inconnue** (aucun avancement reçu, par exemple une tâche
+  par zone). Variables : l'issue, où elle s'est arrêtée, la durée de la
+  session en minutes (vide si la session a commencé avant que Gladys la
+  voie), l'avancement, la surface, la batterie, l'heure de fin.
+- **Navimow de retour à la station** : la tondeuse est arrivée à sa station,
+  quelle qu'en soit la raison (fin de tonte, pause de recharge, renvoi). Une
+  tondeuse que le cloud revoit (hors ligne avant) ne compte pas.
 
-- **Mouvement détecté** (déclencheur) — lance la scène quand un détecteur
-  de démonstration voit bouger quelque chose. Choisissez éventuellement le
-  détecteur et ce qui a bougé (personne, animal) ; laissés vides, toute
-  détection correspond. Les actions suivantes peuvent lire ce qui a bougé
-  avec `{{triggerEvent.data.target}}`.
-- **Identifier un appareil** (action) — fait se signaler l'appareil choisi.
-  Elle indique si l'appareil a pu se signaler, pour que les actions
-  suivantes puissent en dépendre.
+Les actions **démarrer la tonte**, **pause**, **reprendre** et **retour à la
+station** agissent sur la tondeuse choisie, ou sur toutes quand le champ est
+vide. Elles donnent `mower_name` et `count` aux actions suivantes de la
+scène, qui les trouvent dans leur liste de variables (écrites
+`{{<étape>.<action>.<clé>}}`, par exemple `{{0.0.count}}` quand cette action
+est la première de la scène).
 
-## Tableau de bord
+## À quelle fréquence Navimow est appelé
 
-Ajoutez le widget **État de la démo** à un tableau de bord : il affiche en
-direct la température de la station météo et la puissance de la prise du
-bureau, la connexion utilisée par la prise (en orange si dégradée) et la
-position observée. Son bouton **Identifier la lampe** fait se signaler la
-lampe de démonstration.
+Au démarrage : la liste des tondeuses et leur état (un seul appel pour
+toutes). Pendant le travail, les mises à jour en direct apportent les
+changements. L'état est relu toutes les 5 minutes (option **Intervalle de
+relecture de l'état**, 1 à 60), toutes les 2 minutes quand les mises à jour
+en direct sont coupées, et 10 secondes après une commande ; la liste des
+tondeuses toutes les 12 heures et à chaque recherche dans Découverte. Une
+tondeuse à la station n'envoie rien en direct : sa batterie suit la lecture
+des 5 minutes.
 
 ## Dépannage
 
-L'intégration journalise tout ce qu'elle fait : consultez les logs de
-l'intégration depuis l'interface Gladys (ou `docker logs` sur l'hôte) avec
-`LOG_LEVEL=debug` pour le détail complet.
+- **« Non connecté »** : cliquez sur **Connecter** (installation, étape 2).
+- **« La session Navimow a expiré ou a été refusée »** : Segway a mis fin à
+  la session (mot de passe changé, compte déconnecté) : cliquez à nouveau sur
+  **Connecter**.
+- **La page de connexion ne revient pas dans Gladys** : utilisez la connexion
+  à la main ci-dessus.
+- **« Mises à jour en direct coupées »** : l'intégration continue de relire
+  l'état toutes les 2 minutes et se reconnecte toute seule ; les logs disent
+  pourquoi.
+- **L'état a une minute de retard sur l'application** : l'état du cloud que
+  lit l'intégration est un cache ; les mises à jour en direct, quand elles
+  sont actives, sont immédiates.
+- Logs : le niveau de log de l'intégration se règle avec la variable
+  `LOG_LEVEL` (`debug` journalise aussi les messages d'événements et
+  d'attributs des tondeuses).
+
+## Confidentialité
+
+L'intégration n'utilise que l'état de vos tondeuses : les positions que
+Segway envoie avec l'avancement sont jetées aussitôt, jamais stockées ni
+affichées. Le jeton de session ne va que chez Segway et n'apparaît jamais
+dans un log, un état ou une scène.

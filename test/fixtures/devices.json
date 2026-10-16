@@ -1,0 +1,29 @@
+{
+  "code": 1,
+  "desc": "success",
+  "data": {
+    "payload": {
+      "devices": [
+        {
+          "id": "NVM6E2C1A90B47D",
+          "name": "Pelouse",
+          "model": "Navimow i105E",
+          "firmware_version": "1.4.2",
+          "serial_number": "N1E0A7C2B9F4D3",
+          "online": true,
+          "productKey": "navimow-i",
+          "deviceName": "NVM6E2C1A90B47D",
+          "iotId": "NVM6E2C1A90B47D"
+        },
+        {
+          "id": "NVM-X3/potager",
+          "name": "Potager",
+          "model": "Navimow X315",
+          "firmware_version": "2.0.1",
+          "serial_number": "N3X0B1D4E7A2C9",
+          "online": false
+        }
+      ]
+    }
+  }
+}

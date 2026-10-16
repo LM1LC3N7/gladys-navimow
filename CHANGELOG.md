@@ -12,44 +12,27 @@ the notes of the version's GitHub Release.
 
 ### Added
 
-- A working example of scene triggers, scene actions and dashboard widgets
-  (Gladys 5.1.0 or later).
-- `CHANGELOG.md`, rolled by the Release workflow.
-- A GitHub Release for every version, with its changelog section as notes: the
-  Gladys Supervision page links each version to the repository's releases.
-- CI runs the tests on Node 22 and 24, and builds the Docker image.
-- Dependabot keeps the npm dependencies and the GitHub Actions up to date.
-- `SECURITY.md` (how to report a vulnerability) and `CLAUDE.md` (project rules
-  for contributors and coding assistants).
-- Manifest tests: `version` matches `package.json`, `docker_image` is tagged
-  with it, descriptions hold 10 to 100 characters, placeholders are
-  multi-language objects.
-- The latitude and longitude fields show an example value as placeholder.
+- Segway Navimow robotic mowers through the Navimow cloud, signed in with the
+  account of the Navimow app: a **Connect** button (the OAuth2 flow of
+  Segway's Home Assistant integration), or the address of the sign-in page
+  pasted by hand. The session is kept in Gladys and renewed by itself; an
+  ended session asks to connect again.
+- One device per mower: operational state (Gladys vacuum-cleaner states:
+  running, paused, returning to dock, charging, docked, error, stopped),
+  battery, activity, error code and text, online, mowing progress (%) and
+  area mowed in the session (m²); a mow / pause select and a return to the
+  station button.
+- Live updates over MQTT (secure WebSocket) while the mower works, and the
+  state read every 5 minutes (configurable, every 2 minutes while the live
+  updates are down).
+- Scene triggers "error", "activity changed", "mowing finished" (complete,
+  interrupted or unknown, session length, progress, area) and "back in its
+  station".
+- Scene actions "start mowing", "pause", "resume" and "back to the station",
+  for one mower or all of them.
+- A "Robotic mower" dashboard widget: battery, progress, activity, error,
+  online, live updates, and Start / Pause / Resume / Station buttons.
+- A "Test Navimow" button.
+- Feature names and texts in French or English.
 
-### Changed
-
-- Node.js 22 or later is required (Node 20 is end-of-life).
-- Integration SDK 0.15.0. The tests now run against the fake Gladys of the
-  SDK, which refuses the payloads Gladys refuses.
-- The refresh interval is one minute minimum, the fastest Gladys polls a
-  device. The plug's power is only sent when it changes, and every 30
-  minutes otherwise.
-
-### Fixed
-
-- Gladys refused the devices of the Discovery tab: the weather station and
-  the plug declared their poll frequency in seconds instead of one of the
-  values Gladys accepts, and were never polled. They now poll every minute,
-  and the readings follow the refresh interval of the configuration.
-
-- The release commit no longer fails `npm run format:check`: the Release
-  workflow updates the manifest `version` and `docker_image` in place instead
-  of re-printing the whole file with `jq`.
-- The integration can write to `/data`: the image creates the directory owned
-  by the `node` user, a new Docker volume was owned by root.
-- A sub-container running the integration's own image follows it to the new
-  tag at each release, as well as in the manifest of the build summary: it kept
-  the previous tag, which may not exist on the registry. Sub-containers on a
-  third-party image (a broker, a database...) keep theirs.
-
-[Unreleased]: https://github.com/GladysAssistant/integration-template-js/commits/main
+[Unreleased]: https://github.com/LM1LC3N7/gladys-navimow/commits/main

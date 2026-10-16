@@ -1,0 +1,9 @@
+{
+  "code": 1,
+  "desc": "success",
+  "data": {
+    "payload": {
+      "commands": [{ "ids": ["NVM6E2C1A90B47D"], "status": "ERROR", "errorCode": "alreadyInState" }]
+    }
+  }
+}

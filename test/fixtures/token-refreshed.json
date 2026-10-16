@@ -1,0 +1,6 @@
+{
+  "access_token": "nav-access-renewed-aaaa1111",
+  "token_type": "bearer",
+  "expires_in": 3600,
+  "refresh_token": "nav-refresh-renewed-bbbb2222"
+}

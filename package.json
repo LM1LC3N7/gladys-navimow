@@ -1,8 +1,8 @@
 {
-  "name": "gladys-integration-template-js",
-  "version": "1.0.0",
+  "name": "gladys-navimow",
+  "version": "0.1.0",
   "private": true,
-  "description": "Official starter template to build an external integration for Gladys Assistant with the JavaScript SDK.",
+  "description": "Gladys Assistant external integration for Segway Navimow robotic mowers through the Navimow cloud (OAuth2 sign-in, REST and live MQTT). Unofficial, not affiliated with Segway or Navimow.",
   "type": "module",
   "main": "index.js",
   "scripts": {
@@ -10,20 +10,27 @@
     "lint": "eslint .",
     "format": "prettier --write .",
     "format:check": "prettier --check .",
-    "test": "node --test"
+    "test": "node --test",
+    "audit": "npm audit --omit=dev",
+    "validate:manifest": "npx --yes github:GladysAssistant/integration-store ."
   },
   "engines": {
     "node": ">=22"
   },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/LM1LC3N7/gladys-navimow.git"
+  },
   "dependencies": {
-    "@gladysassistant/integration-sdk": "^0.15.0"
+    "@gladysassistant/integration-sdk": "^0.15.0",
+    "mqtt": "^5.16.1"
   },
   "devDependencies": {
     "@eslint/js": "^10.0.1",
     "eslint": "^10.12.0",
     "eslint-config-prettier": "^10.1.8",
     "globals": "^17.13.0",
-    "prettier": "^3.9.9"
+    "prettier": "^3.9.10"
   },
   "license": "Apache-2.0"
 }

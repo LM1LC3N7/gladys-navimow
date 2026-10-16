@@ -1,0 +1,48 @@
+{
+  "start": {
+    "action": -1,
+    "currentMowBoundary": 2,
+    "currentMowProgress": 10000,
+    "mowingPercentage": 100,
+    "mowingWeekArea": "734.08",
+    "subtotalArea": "0.0",
+    "time": 1786428235467,
+    "type": 2
+  },
+  "firstPercent": {
+    "action": 8,
+    "currentMowBoundary": 2,
+    "currentMowProgress": 104,
+    "mowingPercentage": 1,
+    "mowingWeekArea": "738.24",
+    "subtotalArea": "4.21",
+    "time": 1786428451780,
+    "type": 2
+  },
+  "sessionDone": {
+    "action": 5,
+    "currentMowProgress": 10000,
+    "mowingPercentage": 100,
+    "mowingWeekArea": "1096.92",
+    "subtotalArea": "362.91",
+    "time": 1786447746312,
+    "type": 2
+  },
+  "lateArrival": {
+    "action": -1,
+    "currentMowProgress": 6213,
+    "mowingPercentage": 62,
+    "mowingWeekArea": "961.19",
+    "subtotalArea": "227.18",
+    "time": 1786441689297,
+    "type": 2
+  },
+  "posture": {
+    "postureTheta": "1.571",
+    "postureX": "3.329",
+    "postureY": "-1.25",
+    "time": 1786428453780,
+    "type": 1,
+    "vehicleState": 1
+  }
+}

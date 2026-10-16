@@ -1,0 +1,10 @@
+{
+  "code": 1,
+  "desc": "success",
+  "data": {
+    "mqttHost": "wss://mqtt-fra.navimow.example",
+    "mqttUrl": "wss://mqtt-fra.navimow.example/mqtt",
+    "userName": "gladys-user-123",
+    "pwdInfo": "broker-password-456"
+  }
+}

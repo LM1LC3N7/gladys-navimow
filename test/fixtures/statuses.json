@@ -1,0 +1,27 @@
+{
+  "code": 1,
+  "desc": "success",
+  "data": {
+    "payload": {
+      "devices": [
+        {
+          "id": "NVM6E2C1A90B47D",
+          "status": "SUCCESS",
+          "online": true,
+          "vehicleState": "isDocked",
+          "capacityRemaining": [{ "rawValue": 80, "unit": "PERCENTAGE" }],
+          "descriptiveCapacityRemaining": "HIGH",
+          "error_code": "none"
+        },
+        {
+          "id": "NVM-X3/potager",
+          "status": "SUCCESS",
+          "online": true,
+          "vehicleState": "isRunning",
+          "capacityRemaining": [{ "rawValue": 55, "unit": "PERCENTAGE" }],
+          "descriptiveCapacityRemaining": "MEDIUM"
+        }
+      ]
+    }
+  }
+}

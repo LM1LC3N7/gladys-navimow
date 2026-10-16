@@ -1,0 +1,15 @@
+{
+  "mowing": { "state": "isRunning", "battery": 79, "timestamp": 1786428300000 },
+  "docked": { "state": "isDocked", "battery": 81, "timestamp": 1786430000000 },
+  "batteryOnly": { "battery": 81 },
+  "returning": { "state": "isDocking", "battery": 22 },
+  "paused": { "state": "isPaused", "battery": 64 },
+  "lifted": { "state": "isLifted", "battery": 63 },
+  "stuck": { "state": "Error", "battery": 61, "error": { "code": "stuck", "message": null } },
+  "motor": {
+    "state": "Error",
+    "battery": 60,
+    "error": { "code": 214, "message": "Blade motor overload" }
+  },
+  "offline": { "state": "Offline" }
+}

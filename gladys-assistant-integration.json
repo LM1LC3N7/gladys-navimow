@@ -1,177 +1,770 @@
 {
   "manifest_version": 1,
   "type": "device",
-  "name": "Demo Devices Template",
+  "name": "Segway Navimow",
   "description": {
-    "en": "Starter template showing sensors, a switch, a dimmable light and a smart plug.",
-    "fr": "Template de démarrage : capteurs, interrupteur, lampe variable et prise connectée."
+    "en": "Unofficial connector: Segway Navimow mowers, state, battery, start, pause, dock and errors.",
+    "fr": "Connecteur non officiel : tondeuses Segway Navimow, état, batterie, départ, pause, retour, erreurs."
   },
-  "version": "1.0.0",
-  "docker_image": "ghcr.io/gladysassistant/integration-template-js:1.0.0",
+  "version": "0.1.0",
+  "docker_image": "ghcr.io/lm1lc3n7/gladys-navimow:0.1.0",
   "gladys_version": ">=5.1.0",
-  "cover_image": "https://raw.githubusercontent.com/GladysAssistant/integration-template-js/master/cover.png",
-  "categories": ["lighting", "security", "environment"],
-  "transports": ["local", "cloud"],
+  "cover_image": "https://raw.githubusercontent.com/LM1LC3N7/gladys-navimow/main/cover.png",
+  "categories": ["appliances"],
+  "transports": ["cloud"],
   "config_schema": [
     {
       "key": "intro",
       "type": "section",
-      "label": { "en": "Getting started", "fr": "Pour commencer" },
+      "label": {
+        "en": "Segway Navimow in Gladys",
+        "fr": "Les tondeuses Segway Navimow dans Gladys"
+      },
       "description": {
-        "en": "The demo weather station reads real data from the free Open-Meteo API: pick the coordinates to observe. No account, no API key.",
-        "fr": "La station météo de démonstration lit de vraies données via l'API gratuite Open-Meteo : choisissez les coordonnées à observer. Pas de compte, pas de clé d'API."
+        "en": "Unofficial connector, not affiliated with Segway or Navimow. It reads your Navimow robotic mowers (no perimeter wire) through the Navimow cloud, with the account of the Navimow app: one device per mower (state, battery, activity, error, online, mowing progress and area, a mow / pause select and a return to station button), live updates while the mower works, scene triggers on errors, activity changes, the end of mowing and the return to the station, scene actions to start, pause, resume and send it back, and a dashboard widget. Navimow and Segway are trademarks of their owners.",
+        "fr": "Connecteur non officiel, sans lien avec Segway ni Navimow. Il lit vos tondeuses robots Navimow (sans fil périphérique) par le cloud Navimow, avec le compte de l'application Navimow : un appareil par tondeuse (état, batterie, activité, erreur, en ligne, avancement et surface de la tonte, un choix tondre / pause et un bouton de retour à la station), des mises à jour en direct pendant le travail, des déclencheurs de scène sur les erreurs, les changements d'activité, la fin de la tonte et le retour à la station, des actions de scène pour démarrer, mettre en pause, reprendre et renvoyer à la station, et un widget. Navimow et Segway sont des marques de leurs propriétaires."
       },
       "links": [
         {
-          "url": "https://open-meteo.com/en/docs",
-          "label": { "en": "Open-Meteo documentation", "fr": "Documentation Open-Meteo" }
+          "url": "https://github.com/LM1LC3N7/gladys-navimow/blob/main/docs/fr.md",
+          "label": {
+            "en": "Guide (French)",
+            "fr": "Guide (français)"
+          }
+        },
+        {
+          "url": "https://github.com/LM1LC3N7/gladys-navimow/blob/main/docs/en.md",
+          "label": {
+            "en": "Guide (English)",
+            "fr": "Guide (anglais)"
+          }
         }
       ]
     },
     {
-      "key": "latitude",
-      "type": "number",
-      "label": { "en": "Latitude", "fr": "Latitude" },
-      "description": {
-        "en": "Latitude used for the demo weather sensor.",
-        "fr": "Latitude utilisée par le capteur météo de démonstration."
+      "key": "account",
+      "type": "oauth2",
+      "label": {
+        "en": "Navimow account",
+        "fr": "Compte Navimow"
       },
-      "placeholder": { "en": "e.g. 48.8566", "fr": "ex. 48.8566" },
-      "required": true,
-      "default": 48.8566,
-      "min": -90,
-      "max": 90
+      "description": {
+        "en": "Click Connect, then sign in with the e-mail and password of the Navimow app (Segway's page may ask for a captcha). The browser comes back to Gladys by itself. The password stays with Segway: Gladys only keeps a session token.",
+        "fr": "Cliquez sur Connecter, puis connectez-vous avec l'e-mail et le mot de passe de l'application Navimow (la page de Segway peut demander un captcha). Le navigateur revient tout seul dans Gladys. Le mot de passe reste chez Segway : Gladys ne garde qu'un jeton de session."
+      }
     },
     {
-      "key": "longitude",
-      "type": "number",
-      "label": { "en": "Longitude", "fr": "Longitude" },
-      "description": {
-        "en": "Longitude used for the demo weather sensor.",
-        "fr": "Longitude utilisée par le capteur météo de démonstration."
+      "key": "manual_sign_in",
+      "type": "section",
+      "label": {
+        "en": "Connect does not come back to Gladys?",
+        "fr": "Connecter ne revient pas dans Gladys ?"
       },
-      "placeholder": { "en": "e.g. 2.3522", "fr": "ex. 2.3522" },
-      "required": true,
-      "default": 2.3522,
-      "min": -180,
-      "max": 180
-    },
-    {
-      "key": "unit",
-      "type": "select",
-      "label": { "en": "Temperature unit", "fr": "Unité de température" },
-      "required": false,
-      "default": "celsius",
-      "options": [
-        { "value": "celsius", "label": { "en": "Celsius", "fr": "Celsius" } },
-        { "value": "fahrenheit", "label": { "en": "Fahrenheit", "fr": "Fahrenheit" } }
+      "description": {
+        "en": "Sign in by hand instead: open the sign-in page below and sign in. The browser then shows an error page (address starting with http://localhost:1/callback?code=): this is expected. Copy that whole address into the \"Sign in with the copied address\" action at the bottom of this screen, within a few minutes.",
+        "fr": "Connectez-vous à la main : ouvrez la page de connexion ci-dessous et connectez-vous. Le navigateur affiche ensuite une page d'erreur (adresse commençant par http://localhost:1/callback?code=) : c'est normal. Copiez toute cette adresse dans l'action « Se connecter avec l'adresse copiée » en bas de cet écran, dans les minutes qui suivent."
+      },
+      "links": [
+        {
+          "url": "https://navimow-h5-fra.willand.com/smartHome/login?channel=homeassistant&client_id=homeassistant&response_type=code&redirect_uri=http%3A%2F%2Flocalhost%3A1%2Fcallback",
+          "label": {
+            "en": "Navimow sign-in page",
+            "fr": "Page de connexion Navimow"
+          }
+        }
       ]
     },
     {
-      "key": "poll_frequency",
+      "key": "poll_minutes",
       "type": "number",
-      "label": { "en": "Refresh interval (s)", "fr": "Intervalle de rafraîchissement (s)" },
-      "description": {
-        "en": "How often sensors are polled, in seconds (one minute minimum).",
-        "fr": "Fréquence d'interrogation des capteurs, en secondes (une minute minimum)."
-      },
       "required": false,
-      "default": 300,
-      "min": 60,
-      "max": 3600
+      "default": 5,
+      "min": 1,
+      "max": 60,
+      "label": {
+        "en": "Status refresh interval (minutes)",
+        "fr": "Intervalle de relecture de l'état (minutes)"
+      },
+      "description": {
+        "en": "The live updates carry the changes while the mower works; the state and the battery are also read at this pace (every 2 minutes at most while the live updates are down).",
+        "fr": "Les mises à jour en direct apportent les changements pendant le travail ; l'état et la batterie sont aussi relus à ce rythme (toutes les 2 minutes au plus quand les mises à jour en direct sont coupées)."
+      }
+    },
+    {
+      "key": "language",
+      "type": "select",
+      "required": false,
+      "default": "fr",
+      "label": {
+        "en": "Language of the names and texts (activity, error)",
+        "fr": "Langue des noms et des textes (activité, erreur)"
+      },
+      "options": [
+        {
+          "value": "fr",
+          "label": {
+            "en": "French",
+            "fr": "Français"
+          }
+        },
+        {
+          "value": "en",
+          "label": {
+            "en": "English",
+            "fr": "Anglais"
+          }
+        }
+      ]
     }
   ],
   "actions": [
     {
-      "key": "test_weather",
-      "label": { "en": "Test the weather provider", "fr": "Tester le fournisseur météo" },
-      "timeout_seconds": 30
+      "key": "test_connection",
+      "timeout_seconds": 30,
+      "label": {
+        "en": "Test Navimow",
+        "fr": "Tester Navimow"
+      },
+      "description": {
+        "en": "Reads the mowers of the account and shows their activity and battery, and the state of the live updates.",
+        "fr": "Lit les tondeuses du compte et affiche leur activité et leur batterie, et l'état des mises à jour en direct."
+      }
     },
     {
-      "key": "identify",
-      "label": { "en": "Identify a device", "fr": "Identifier un appareil" },
-      "fields": [
-        {
-          "key": "device",
-          "type": "select",
-          "source": "devices",
-          "label": { "en": "Device", "fr": "Appareil" },
-          "required": true
-        }
-      ]
-    }
-  ],
-  "scene_triggers": [
-    {
-      "key": "motion_detected",
-      "label": { "en": "Motion detected", "fr": "Mouvement détecté" },
+      "key": "sign_in_with_url",
+      "timeout_seconds": 30,
+      "label": {
+        "en": "Sign in with the copied address",
+        "fr": "Se connecter avec l'adresse copiée"
+      },
       "description": {
-        "en": "A demo motion sensor saw a person or an animal move.",
-        "fr": "Un détecteur de démonstration a vu bouger une personne ou un animal."
+        "en": "Only for the manual sign-in described above.",
+        "fr": "Uniquement pour la connexion à la main décrite plus haut."
       },
       "fields": [
         {
-          "key": "device",
-          "type": "select",
-          "source": "devices",
-          "label": { "en": "Sensor", "fr": "Détecteur" }
-        },
-        {
-          "key": "target",
-          "type": "multi_select",
-          "label": { "en": "What moved", "fr": "Ce qui a bougé" },
-          "options": [
-            { "value": "person", "label": { "en": "Person", "fr": "Personne" } },
-            { "value": "animal", "label": { "en": "Animal", "fr": "Animal" } }
-          ]
-        }
-      ],
-      "variables": [
-        {
-          "key": "target",
+          "key": "url",
           "type": "string",
-          "label": { "en": "What moved", "fr": "Ce qui a bougé" }
-        }
-      ]
-    }
-  ],
-  "scene_actions": [
-    {
-      "key": "identify_device",
-      "label": { "en": "Identify a device", "fr": "Identifier un appareil" },
-      "description": {
-        "en": "Make a device signal itself (the demo light blinks).",
-        "fr": "Fait se signaler un appareil (la lampe de démonstration clignote)."
-      },
-      "timeout_seconds": 15,
-      "fields": [
-        {
-          "key": "device",
-          "type": "select",
-          "source": "devices",
-          "label": { "en": "Device", "fr": "Appareil" },
-          "required": true
-        }
-      ],
-      "outputs": [
-        {
-          "key": "signalled",
-          "type": "boolean",
-          "label": { "en": "Device signalled", "fr": "Appareil signalé" }
+          "required": true,
+          "label": {
+            "en": "Address of the page shown after signing in",
+            "fr": "Adresse de la page affichée après la connexion"
+          },
+          "placeholder": {
+            "en": "http://localhost:1/callback?code=…",
+            "fr": "http://localhost:1/callback?code=…"
+          }
         }
       ]
     }
   ],
   "widgets": [
     {
-      "key": "demo_status",
-      "label": { "en": "Demo status", "fr": "État de la démo" },
-      "description": {
-        "en": "Live temperature and plug power, plug connection and observed location.",
-        "fr": "Température et puissance en direct, connexion de la prise, position observée."
+      "key": "mower",
+      "label": {
+        "en": "Robotic mower",
+        "fr": "Tondeuse robot"
       },
-      "icon": "activity",
-      "action_timeout_seconds": 15
+      "description": {
+        "en": "A Navimow mower: battery, progress, activity, error, buttons to start, pause, resume, dock.",
+        "fr": "Une tondeuse Navimow : batterie, avancement, activité, erreur, boutons démarrer, pause, station."
+      },
+      "icon": "scissors",
+      "action_timeout_seconds": 30,
+      "settings": [
+        {
+          "key": "mower",
+          "type": "select",
+          "source": "devices",
+          "required": false,
+          "label": {
+            "en": "Mower (empty: the first one)",
+            "fr": "Tondeuse (vide : la première)"
+          }
+        }
+      ]
+    }
+  ],
+  "scene_triggers": [
+    {
+      "key": "mower_error",
+      "label": {
+        "en": "Navimow error",
+        "fr": "Erreur Navimow"
+      },
+      "description": {
+        "en": "A mower reports an error (lifted, stuck, a motor or sensor error...), once per error.",
+        "fr": "Une tondeuse signale une erreur (soulevée, coincée, erreur de moteur ou de capteur...), une fois par erreur."
+      },
+      "fields": [
+        {
+          "key": "mower",
+          "type": "select",
+          "source": "devices",
+          "required": false,
+          "label": {
+            "en": "Mower (empty: any)",
+            "fr": "Tondeuse (vide : n'importe laquelle)"
+          }
+        }
+      ],
+      "variables": [
+        {
+          "key": "mower_name",
+          "type": "string",
+          "label": {
+            "en": "Mower",
+            "fr": "Tondeuse"
+          }
+        },
+        {
+          "key": "code",
+          "type": "number",
+          "label": {
+            "en": "Error code (-1: no code)",
+            "fr": "Code d'erreur (-1 : sans code)"
+          }
+        },
+        {
+          "key": "error_en",
+          "type": "string",
+          "label": {
+            "en": "Error (English)",
+            "fr": "Erreur (anglais)"
+          }
+        },
+        {
+          "key": "error_fr",
+          "type": "string",
+          "label": {
+            "en": "Error (French)",
+            "fr": "Erreur (français)"
+          }
+        },
+        {
+          "key": "activity",
+          "type": "string",
+          "label": {
+            "en": "Activity",
+            "fr": "Activité"
+          }
+        },
+        {
+          "key": "battery",
+          "type": "number",
+          "label": {
+            "en": "Battery (%)",
+            "fr": "Batterie (%)"
+          }
+        }
+      ]
+    },
+    {
+      "key": "activity_changed",
+      "label": {
+        "en": "Navimow activity changed",
+        "fr": "Activité Navimow changée"
+      },
+      "description": {
+        "en": "A mower starts mowing, pauses, goes back to its station, charges, gets lifted, goes offline...",
+        "fr": "Une tondeuse se met à tondre, fait une pause, rentre à la station, charge, est soulevée, passe hors ligne..."
+      },
+      "fields": [
+        {
+          "key": "mower",
+          "type": "select",
+          "source": "devices",
+          "required": false,
+          "label": {
+            "en": "Mower (empty: any)",
+            "fr": "Tondeuse (vide : n'importe laquelle)"
+          }
+        },
+        {
+          "key": "activity",
+          "type": "select",
+          "required": false,
+          "label": {
+            "en": "New activity (empty: any)",
+            "fr": "Nouvelle activité (vide : n'importe laquelle)"
+          },
+          "options": [
+            {
+              "value": "mowing",
+              "label": {
+                "en": "Mowing",
+                "fr": "Tonte"
+              }
+            },
+            {
+              "value": "mapping",
+              "label": {
+                "en": "Mapping the lawn",
+                "fr": "Cartographie du terrain"
+              }
+            },
+            {
+              "value": "paused",
+              "label": {
+                "en": "Paused",
+                "fr": "En pause"
+              }
+            },
+            {
+              "value": "returning",
+              "label": {
+                "en": "Returning to the station",
+                "fr": "Retour à la station"
+              }
+            },
+            {
+              "value": "docked",
+              "label": {
+                "en": "In the station",
+                "fr": "À la station"
+              }
+            },
+            {
+              "value": "charging",
+              "label": {
+                "en": "Charging",
+                "fr": "En charge"
+              }
+            },
+            {
+              "value": "idle",
+              "label": {
+                "en": "Idle",
+                "fr": "À l'arrêt"
+              }
+            },
+            {
+              "value": "lifted",
+              "label": {
+                "en": "Lifted",
+                "fr": "Soulevée"
+              }
+            },
+            {
+              "value": "error",
+              "label": {
+                "en": "Error",
+                "fr": "Erreur"
+              }
+            },
+            {
+              "value": "updating",
+              "label": {
+                "en": "Software update",
+                "fr": "Mise à jour logicielle"
+              }
+            },
+            {
+              "value": "self_check",
+              "label": {
+                "en": "Self-check",
+                "fr": "Autotest"
+              }
+            },
+            {
+              "value": "offline",
+              "label": {
+                "en": "Offline",
+                "fr": "Hors ligne"
+              }
+            },
+            {
+              "value": "unknown",
+              "label": {
+                "en": "Unknown",
+                "fr": "Inconnu"
+              }
+            }
+          ]
+        }
+      ],
+      "variables": [
+        {
+          "key": "mower_name",
+          "type": "string",
+          "label": {
+            "en": "Mower",
+            "fr": "Tondeuse"
+          }
+        },
+        {
+          "key": "activity",
+          "type": "string",
+          "label": {
+            "en": "New activity",
+            "fr": "Nouvelle activité"
+          }
+        },
+        {
+          "key": "previous_activity",
+          "type": "string",
+          "label": {
+            "en": "Previous activity",
+            "fr": "Activité précédente"
+          }
+        },
+        {
+          "key": "battery",
+          "type": "number",
+          "label": {
+            "en": "Battery (%)",
+            "fr": "Batterie (%)"
+          }
+        }
+      ]
+    },
+    {
+      "key": "mowing_finished",
+      "label": {
+        "en": "Navimow mowing finished",
+        "fr": "Tonte Navimow terminée"
+      },
+      "description": {
+        "en": "A mowing session ended in the station or idle: complete (100 %), interrupted (a stop or a charging break) or unknown (no progress reported).",
+        "fr": "Une session de tonte s'est terminée à la station ou à l'arrêt : complète (100 %), interrompue (un arrêt ou une pause de recharge) ou inconnue (aucun avancement reçu)."
+      },
+      "fields": [
+        {
+          "key": "mower",
+          "type": "select",
+          "source": "devices",
+          "required": false,
+          "label": {
+            "en": "Mower (empty: any)",
+            "fr": "Tondeuse (vide : n'importe laquelle)"
+          }
+        },
+        {
+          "key": "outcome",
+          "type": "select",
+          "required": false,
+          "label": {
+            "en": "Outcome (empty: any)",
+            "fr": "Issue (vide : n'importe laquelle)"
+          },
+          "options": [
+            {
+              "value": "complete",
+              "label": {
+                "en": "Complete (100 %)",
+                "fr": "Complète (100 %)"
+              }
+            },
+            {
+              "value": "interrupted",
+              "label": {
+                "en": "Interrupted",
+                "fr": "Interrompue"
+              }
+            },
+            {
+              "value": "unknown",
+              "label": {
+                "en": "Unknown (no progress reported)",
+                "fr": "Inconnue (aucun avancement reçu)"
+              }
+            }
+          ]
+        }
+      ],
+      "variables": [
+        {
+          "key": "mower_name",
+          "type": "string",
+          "label": {
+            "en": "Mower",
+            "fr": "Tondeuse"
+          }
+        },
+        {
+          "key": "outcome",
+          "type": "string",
+          "label": {
+            "en": "Outcome",
+            "fr": "Issue"
+          }
+        },
+        {
+          "key": "activity",
+          "type": "string",
+          "label": {
+            "en": "Where it ended (activity)",
+            "fr": "Où elle s'est arrêtée (activité)"
+          }
+        },
+        {
+          "key": "minutes",
+          "type": "number",
+          "label": {
+            "en": "Session length (min, empty if unknown)",
+            "fr": "Durée de la session (min, vide si inconnue)"
+          }
+        },
+        {
+          "key": "progress",
+          "type": "number",
+          "label": {
+            "en": "Progress (%, empty if unknown)",
+            "fr": "Avancement (%, vide si inconnu)"
+          }
+        },
+        {
+          "key": "area",
+          "type": "number",
+          "label": {
+            "en": "Area mowed (m², empty if unknown)",
+            "fr": "Surface tondue (m², vide si inconnue)"
+          }
+        },
+        {
+          "key": "battery",
+          "type": "number",
+          "label": {
+            "en": "Battery (%)",
+            "fr": "Batterie (%)"
+          }
+        },
+        {
+          "key": "finished_at",
+          "type": "string",
+          "label": {
+            "en": "Finished at (ISO)",
+            "fr": "Terminée à (ISO)"
+          }
+        }
+      ]
+    },
+    {
+      "key": "back_to_station",
+      "label": {
+        "en": "Navimow back in its station",
+        "fr": "Navimow de retour à la station"
+      },
+      "description": {
+        "en": "A mower arrived in its charging station (end of mowing, charging break or sent back).",
+        "fr": "Une tondeuse est arrivée à sa station de charge (fin de tonte, pause de recharge ou renvoi)."
+      },
+      "fields": [
+        {
+          "key": "mower",
+          "type": "select",
+          "source": "devices",
+          "required": false,
+          "label": {
+            "en": "Mower (empty: any)",
+            "fr": "Tondeuse (vide : n'importe laquelle)"
+          }
+        }
+      ],
+      "variables": [
+        {
+          "key": "mower_name",
+          "type": "string",
+          "label": {
+            "en": "Mower",
+            "fr": "Tondeuse"
+          }
+        },
+        {
+          "key": "previous_activity",
+          "type": "string",
+          "label": {
+            "en": "Previous activity",
+            "fr": "Activité précédente"
+          }
+        },
+        {
+          "key": "battery",
+          "type": "number",
+          "label": {
+            "en": "Battery (%)",
+            "fr": "Batterie (%)"
+          }
+        },
+        {
+          "key": "progress",
+          "type": "number",
+          "label": {
+            "en": "Progress (%, empty if unknown)",
+            "fr": "Avancement (%, vide si inconnu)"
+          }
+        }
+      ]
+    }
+  ],
+  "scene_actions": [
+    {
+      "key": "start",
+      "label": {
+        "en": "Navimow: start mowing",
+        "fr": "Navimow : démarrer la tonte"
+      },
+      "description": {
+        "en": "Start mowing (the task set in the Navimow app).",
+        "fr": "Démarrer la tonte (la tâche réglée dans l'application Navimow)."
+      },
+      "timeout_seconds": 30,
+      "fields": [
+        {
+          "key": "mower",
+          "type": "select",
+          "source": "devices",
+          "required": false,
+          "label": {
+            "en": "Mower (empty: every mower)",
+            "fr": "Tondeuse (vide : toutes)"
+          }
+        }
+      ],
+      "outputs": [
+        {
+          "key": "mower_name",
+          "type": "string",
+          "label": {
+            "en": "Mower(s)",
+            "fr": "Tondeuse(s)"
+          }
+        },
+        {
+          "key": "count",
+          "type": "number",
+          "label": {
+            "en": "Mowers commanded",
+            "fr": "Tondeuses commandées"
+          }
+        }
+      ]
+    },
+    {
+      "key": "pause",
+      "label": {
+        "en": "Navimow: pause",
+        "fr": "Navimow : pause"
+      },
+      "description": {
+        "en": "Stop the mower where it is, until it is resumed, started or sent back.",
+        "fr": "Arrêter la tondeuse là où elle est, jusqu'à une reprise, un démarrage ou un retour."
+      },
+      "timeout_seconds": 30,
+      "fields": [
+        {
+          "key": "mower",
+          "type": "select",
+          "source": "devices",
+          "required": false,
+          "label": {
+            "en": "Mower (empty: every mower)",
+            "fr": "Tondeuse (vide : toutes)"
+          }
+        }
+      ],
+      "outputs": [
+        {
+          "key": "mower_name",
+          "type": "string",
+          "label": {
+            "en": "Mower(s)",
+            "fr": "Tondeuse(s)"
+          }
+        },
+        {
+          "key": "count",
+          "type": "number",
+          "label": {
+            "en": "Mowers commanded",
+            "fr": "Tondeuses commandées"
+          }
+        }
+      ]
+    },
+    {
+      "key": "resume",
+      "label": {
+        "en": "Navimow: resume",
+        "fr": "Navimow : reprendre"
+      },
+      "description": {
+        "en": "Resume a paused mowing.",
+        "fr": "Reprendre une tonte en pause."
+      },
+      "timeout_seconds": 30,
+      "fields": [
+        {
+          "key": "mower",
+          "type": "select",
+          "source": "devices",
+          "required": false,
+          "label": {
+            "en": "Mower (empty: every mower)",
+            "fr": "Tondeuse (vide : toutes)"
+          }
+        }
+      ],
+      "outputs": [
+        {
+          "key": "mower_name",
+          "type": "string",
+          "label": {
+            "en": "Mower(s)",
+            "fr": "Tondeuse(s)"
+          }
+        },
+        {
+          "key": "count",
+          "type": "number",
+          "label": {
+            "en": "Mowers commanded",
+            "fr": "Tondeuses commandées"
+          }
+        }
+      ]
+    },
+    {
+      "key": "dock",
+      "label": {
+        "en": "Navimow: back to the station",
+        "fr": "Navimow : retour à la station"
+      },
+      "description": {
+        "en": "Send the mower back to its charging station.",
+        "fr": "Renvoyer la tondeuse à sa station de charge."
+      },
+      "timeout_seconds": 30,
+      "fields": [
+        {
+          "key": "mower",
+          "type": "select",
+          "source": "devices",
+          "required": false,
+          "label": {
+            "en": "Mower (empty: every mower)",
+            "fr": "Tondeuse (vide : toutes)"
+          }
+        }
+      ],
+      "outputs": [
+        {
+          "key": "mower_name",
+          "type": "string",
+          "label": {
+            "en": "Mower(s)",
+            "fr": "Tondeuse(s)"
+          }
+        },
+        {
+          "key": "count",
+          "type": "number",
+          "label": {
+            "en": "Mowers commanded",
+            "fr": "Tondeuses commandées"
+          }
+        }
+      ]
     }
   ]
 }
