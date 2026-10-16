@@ -10,6 +10,8 @@ the notes of the version's GitHub Release.
 
 ## [Unreleased]
 
+## [0.1.1] - 2026-10-16
+
 ### Added
 
 - Segway Navimow robotic mowers through the Navimow cloud, signed in with the
@@ -35,4 +37,5 @@ the notes of the version's GitHub Release.
 - A "Test Navimow" button.
 - Feature names and texts in French or English.
 
-[Unreleased]: https://github.com/LM1LC3N7/gladys-navimow/commits/main
+[Unreleased]: https://github.com/LM1LC3N7/gladys-navimow/compare/v0.1.1...HEAD
+[0.1.1]: https://github.com/LM1LC3N7/gladys-navimow/releases/tag/v0.1.1

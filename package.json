@@ -1,6 +1,6 @@
 {
   "name": "gladys-navimow",
-  "version": "0.1.0",
+  "version": "0.1.1",
   "private": true,
   "description": "Gladys Assistant external integration for Segway Navimow robotic mowers through the Navimow cloud (OAuth2 sign-in, REST and live MQTT). Unofficial, not affiliated with Segway or Navimow.",
   "type": "module",
