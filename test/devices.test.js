@@ -57,8 +57,8 @@ test('one device per mower, with stable ids, the vacuum-cleaner trio and the sen
   assert.deepEqual(
     device.features.find((f) => f.external_id.endsWith(':run_mode')).supported_options,
     [
-      { value: RUN_MODE.IDLE, label: { en: 'Pause', fr: 'Pause' }, sort_order: 1 },
-      { value: RUN_MODE.CLEANING, label: { en: 'Mow', fr: 'Tondre' }, sort_order: 2 },
+      { value: RUN_MODE.IDLE, label: 'Pause', sort_order: 1 },
+      { value: RUN_MODE.CLEANING, label: 'Mow', sort_order: 2 },
     ],
   );
   assert.deepEqual(device.params, [

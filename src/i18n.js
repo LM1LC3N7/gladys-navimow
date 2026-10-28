@@ -60,9 +60,10 @@ export const T = {
     progress: { en: 'Mowing progress', fr: 'Avancement de la tonte' },
     mowed_area: { en: 'Area mowed (session)', fr: 'Surface tondue (session)' },
   },
+  // Plain strings: the Gladys core refuses a publication whose option label is not one.
   runOptions: {
-    pause: { en: 'Pause', fr: 'Pause' },
-    mow: { en: 'Mow', fr: 'Tondre' },
+    pause: 'Pause',
+    mow: 'Mow',
   },
 
   // --- Connection status ---------------------------------------------------------------
