@@ -10,6 +10,8 @@ the notes of the version's GitHub Release.
 
 ## [Unreleased]
 
+## [0.1.2] - 2026-10-28
+
 ### Fixed
 
 - Plain string labels for the select options of the run mode, so Discovery lists
@@ -43,5 +45,6 @@ the notes of the version's GitHub Release.
 - A "Test Navimow" button.
 - Feature names and texts in French or English.
 
-[Unreleased]: https://github.com/LM1LC3N7/gladys-navimow/compare/v0.1.1...HEAD
+[Unreleased]: https://github.com/LM1LC3N7/gladys-navimow/compare/v0.1.2...HEAD
+[0.1.2]: https://github.com/LM1LC3N7/gladys-navimow/compare/v0.1.1...v0.1.2
 [0.1.1]: https://github.com/LM1LC3N7/gladys-navimow/releases/tag/v0.1.1
